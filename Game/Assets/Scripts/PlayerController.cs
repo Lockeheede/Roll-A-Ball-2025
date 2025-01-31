@@ -7,7 +7,7 @@ public class PlayerController : MonoBehaviour
 {
     [SerializeField] private float speed = 0; // Speed variable that can be set in the Unity Editor
     public TextMeshProUGUI countText; // Reference to the TextMeshProUGUI component
-    public GameObject winTextObject; // Reference to the GameObject component
+    public TextMeshProUGUI winTextObject; // Reference to the GameObject component
     private Rigidbody rb; // Reference to the Rigidbody component
     private int count;
     private float movementX;
@@ -19,7 +19,7 @@ public class PlayerController : MonoBehaviour
         count = 0; // Set the count variable to 0
 
         SetCountText(); // Call the SetCountText function
-        winTextObject.SetActive(false); // Set the winTextObject to inactive
+        winTextObject.gameObject.SetActive(false); // Set the winTextObject to inactive
     }
 
     void OnMove(InputValue movementValue)
@@ -33,7 +33,10 @@ public class PlayerController : MonoBehaviour
         countText.text = "Count: " + count.ToString(); // Set the text of the countText to "Count: " + the value of the count variable
         if(count >= 12)
         {
-            winTextObject.SetActive(true); // Set the winTextObject to active
+            winTextObject.gameObject.SetActive(true); // Set the winTextObject to active
+            winTextObject.text = "You Win!"; // Set the text of the winTextObject to "You Win!"
+
+            Destroy(GameObject.FindGameObjectWithTag("Enemy")); // Destroy the GameObject with the tag "Enemy"
         }
     }
 
@@ -51,6 +54,15 @@ public class PlayerController : MonoBehaviour
             other.gameObject.SetActive(false); // Set the object that the player collided with to inactive
             count++; // Increment the count variable
             SetCountText(); // Call the SetCountText function
+        }
+    }
+
+    private void OnCollisionEnter(Collision collision) {
+        if(collision.gameObject.CompareTag("Enemy")) {
+            Destroy(gameObject);
+
+            winTextObject.gameObject.SetActive(true);
+            winTextObject.text = "You Lose!";
         }
     }
 
